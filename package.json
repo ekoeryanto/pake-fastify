@@ -1,0 +1,52 @@
+{
+  "name": "pake-fastify",
+  "version": "1.0.0",
+  "description": "Fastify server app.",
+  "main": "app.ts",
+  "directories": {
+    "test": "test"
+  },
+  "type": "module",
+  "scripts": {
+    "start": "node -r dotenv/config dist/server.js",
+    "build": "bob-ts -i src",
+    "dev": "bob-ts-watch -i src -c \"npm start\"",
+    "pretest": "bob-ts -f cjs -i test -d .temp ",
+    "test": "tap -R specy .temp/**/*.test.cjs",
+    "lint": "eslint --ext .ts --fix ."
+  },
+  "tap": {
+    "node-arg": [
+      "--require=dotenv/config",
+      "--no-warnings",
+      "--experimental-loader=@istanbuljs/esm-loader-hook"
+    ]
+  },
+  "keywords": [
+    "fastify",
+    "API",
+    "ESM",
+    "Typescript"
+  ],
+  "author": "Eko Eryanto<ekoeryanto@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@fastify/sensible": "^5.0.0",
+    "close-with-grace": "^1.1.0",
+    "dotenv": "^16.0.1",
+    "fastify": "^4.0.0-rc.2",
+    "fastify-cli": "^3.0.1",
+    "fastify-plugin": "^3.0.0"
+  },
+  "devDependencies": {
+    "@istanbuljs/esm-loader-hook": "^0.1.2",
+    "@types/node": "^16.0.0",
+    "@types/tap": "^15.0.5",
+    "bob-ts": "^3.1.2",
+    "eslint": "^8.14.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "tap": "^16.1.0",
+    "typescript": "^4.5.4"
+  }
+}
