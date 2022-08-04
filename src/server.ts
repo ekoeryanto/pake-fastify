@@ -2,8 +2,24 @@ import Fastify from 'fastify';
 import closeWithGrace from 'close-with-grace';
 import { app } from './app';
 
+const {
+  NODE_ENV, HOST = '0.0.0.0', PORT = '3173', TRUST_PROXY, ABORT_UNHANDLED,
+} = process.env;
+
 const fastify = Fastify({
-  logger: true,
+  trustProxy: TRUST_PROXY || HOST,
+  logger: {
+    transport:
+      NODE_ENV !== 'production'
+        ? {
+          target: 'pino-pretty',
+          options: {
+            translateTime: 'SYS:standard',
+            ignore: 'pid,hostname',
+          },
+        }
+        : undefined,
+  },
 });
 
 fastify.register(app);
@@ -26,15 +42,16 @@ fastify.addHook('onClose', async (instance, done) => {
 
 process.on('unhandledRejection', (err) => {
   fastify.log.error(err);
-  // if (options.abort) {
-  //   process.abort();
-  // }
+  if (ABORT_UNHANDLED) {
+    process.abort();
+  }
   process.exit(1);
 });
 
 // Start listening.
 fastify.listen({
-  port: +process.env.PORT! || 3000,
+  host: HOST,
+  port: parseInt(PORT, 10),
 }, (err) => {
   if (err) {
     fastify.log.error(err);
